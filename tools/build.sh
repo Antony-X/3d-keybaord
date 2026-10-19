@@ -9,17 +9,17 @@ cd "$(dirname "$0")/.."
 OPENSCAD=${OPENSCAD:-openscad}
 SIZE=${SIZE:-30}
 HOLES=${HOLES:-"13.9 14.0 14.1 14.2"}
-SLOPS=${SLOPS:-"0.2 0.3 0.4 0.5"}
+FITS=${FITS:-"0.1 0.2 0.3 0.4"}
 
 scad() { "$OPENSCAD" --backend=manifold --export-format=binstl -q "$@"; }
 
 mkdir -p stl images
 
-# Printable keycaps (KeyV2), one per stem tolerance. First, because the previews use one.
-for s in $SLOPS; do
+# Printable keycaps (KeyV2), one per cross-hole clearance. First, because the previews use one.
+for s in $FITS; do
     raw=$(mktemp --suffix=.stl)
-    scad -o "$raw" -D "stem_slop=$s" cad/keycap.scad
-    python3 tools/clean_mesh.py "$raw" "stl/keycap_dsa_stem${s}.stl"
+    scad -o "$raw" -D "cross_slop=$s" cad/keycap.scad
+    python3 tools/clean_mesh.py "$raw" "stl/keycap_dsa_fit${s}.stl"
     rm -f "$raw"
 done
 

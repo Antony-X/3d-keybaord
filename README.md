@@ -40,7 +40,7 @@ The only tricky parts are:
 | Part | Qty | Print or buy? | Notes |
 |---|---|---|---|
 | Cube body | 1 | **Print** | Either version above |
-| Keycaps | 6 | **Print** (or reuse/buy) | `stl/keycap_dsa_stem*.stl`, see [Keycaps](#keycaps). Any bought 1u MX keycap also fits. |
+| Keycaps | 6 | **Print** (or reuse/buy) | `stl/keycap_dsa_fit*.stl`, see [Keycaps](#keycaps). Any bought 1u MX keycap also fits. |
 | MX-style mechanical switches | 6 | **Buy** (or reuse) | Any plate-mount MX-compatible switch: Cherry MX, Gateron, Kailh BOX, Outemu, Akko, etc. 3-pin and 5-pin both work as they are. The switches in your photos (clear housing, light-blue box stem) look like **Kailh BOX Pale Blue**, a clicky switch. About $3.50 for 10. |
 | Keycap + switch puller | 1 | Buy (optional) | About $2–14. Only needed to take it apart again. |
 | Filament | ~22 g | | PLA or PETG: about 12–13 g for the body, about 1.5 g per keycap |
@@ -55,10 +55,10 @@ The only tricky parts are:
 | `stl/switch_cube_30mm_hole14.1.stl` | **The one-piece cube, default hole size.** Print this one if you skip the fit test. |
 | `stl/switch_cube_30mm_hole13.9.stl` … `hole14.2.stl` | The same cube in the other hole sizes, to match your fit-test result |
 | `stl/frame_cube_frame.stl` + `stl/frame_cube_plate_hole*.stl` | Frame + plates version: 1 frame, 6 plates in the hole size you picked |
-| `stl/keycap_dsa_stem0.2.stl` … `stem0.5.stl` | Printable DSA keycaps; the number is the stem clearance in mm |
+| `stl/keycap_dsa_fit0.1.stl` … `fit0.4.stl` | Printable DSA keycaps; the number is the extra clearance (mm) in the "+" hole that grips the switch |
 | `cad/switch_cube.scad` | Parametric OpenSCAD source (size, hole, lip, pockets) |
 | `cad/frame_cube.scad` | Parametric source for the frame + plates version (bar size, press-fit gap, crush ribs) |
-| `cad/keycap.scad` | Keycap source: profile, stem clearance, optional legend. Uses KeyV2 from `cad/lib/KeyV2`. |
+| `cad/keycap.scad` | Keycap source: profile, "+" hole clearance, optional legend. Uses KeyV2 from `cad/lib/KeyV2`. |
 | `cad/preview.scad` | Stand-in switches plus the printed keycaps, used for the pictures |
 | `tools/check_fit.py` | Collision check: switches vs. the cube and vs. each other, in every rotation |
 | `tools/build.sh` | Rebuilds all STLs and images and runs the check |
@@ -93,7 +93,7 @@ PrusaSlicer's generic profile with supports off gives about **12 g** and 1.5 h. 
 The keycaps come from **[KeyV2](https://github.com/rsheldiii/KeyV2)**, a widely used open-source keycap generator (GPL-3.0).
 They're DSA profile: short, and the same on every face.
 
-The stem is the part that has to fit, and it varies by printer. So print the **four test caps first**: `keycap_dsa_stem0.2`, `0.3`, `0.4` and `0.5`.
+The stem is the part that has to fit, and it varies by printer. So print the **four test caps first**: `keycap_dsa_fit0.1`, `0.2`, `0.3` and `0.4`. The number is extra clearance in the "+" hole; 0.2 is KeyV2's default.
 Press each onto a switch. Keep the one that goes on firmly and doesn't fall off when you shake it, then print the rest at that size.
 In general, a bigger number means a looser cap.
 
@@ -138,7 +138,7 @@ To remove a keycap without pulling the switch out, use a keycap puller.
 - *Switch won't go in:* use the next larger hole size, or file the hole lightly. Also check for elephant's foot.
 - *Switch wobbles or pops out:* use a smaller hole size. Or the lip printed thin: reprint at 0.15 mm layers.
 - *A switch feels gritty:* it's being squeezed. Use a larger hole size.
-- *Printed keycap won't go on, or cracks:* use a bigger stem number. *Falls off:* use a smaller one.
+- *Printed keycap won't go on, or cracks:* use a bigger fit number. *Falls off:* use a smaller one.
 
 ## How it works
 
@@ -173,7 +173,7 @@ First fetch KeyV2 with `git submodule update --init`. Then, for example:
 
 ```sh
 openscad -o my_cube.stl -D 'part="cube"' -D cube_size=30 -D hole_size=14.05 cad/switch_cube.scad
-openscad -o my_cap.stl -D stem_slop=0.35 -D 'legend_text="A"' cad/keycap.scad
+openscad -o my_cap.stl -D cross_slop=0.2 -D 'legend_text="A"' cad/keycap.scad
 python3 tools/check_fit.py my_cube.stl 30      # needs: pip install trimesh manifold3d
 ```
 
