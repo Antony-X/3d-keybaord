@@ -1,6 +1,7 @@
 // Preview renders only (not for printing): the cube with stand-in switches and keycaps.
-//   view = "assembled" | "exploded" | "section"
+//   view = "assembled" | "exploded" | "section" | "frame_assembled" | "frame_exploded"
 use <switch_cube.scad>
+use <frame_cube.scad>
 
 view = "assembled";
 cube_size = 30;
@@ -44,8 +45,10 @@ module keycap(lift = 6.5) {
         }
 }
 
-module stack(i, explode = 0) {
+module stack(i, explode = 0, plate_explode = -1) {
     rotate(face_rotations[i]) {
+        if (plate_explode >= 0)
+            color("#f4f4f2") translate([0, 0, A + plate_explode]) mirror([0, 0, 1]) plate();
         translate([0, 0, A + explode]) mx_switch();
         color(cap_colors[i]) translate([0, 0, A + 1.8 * explode]) keycap();
     }
@@ -57,6 +60,12 @@ if (view == "assembled") {
 } else if (view == "exploded") {
     color("#f4f4f2") switch_cube();
     for (i = [0 : 5]) stack(i, 14);
+} else if (view == "frame_assembled") {
+    color("#f4f4f2") frame();
+    for (i = [0 : 5]) stack(i, 0, 0);
+} else if (view == "frame_exploded") {
+    color("#f4f4f2") frame();
+    for (i = [0 : 5]) stack(i, 30, 14);
 } else if (view == "section") {
     difference() {
         union() {

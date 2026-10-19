@@ -7,6 +7,23 @@ It prints as **one piece, with no supports**. You push six switches in from the 
 |---|---|---|
 | ![assembled](images/assembled.png) | ![exploded](images/exploded.png) | ![section](images/section.png) |
 
+## Two versions
+
+| | One-piece cube | Frame + plates (style of the original) |
+|---|---|---|
+| Picture | ![assembled](images/assembled.png) | ![frame](images/frame_assembled.png) |
+| Parts to print | `switch_cube_30mm_hole14.1.stl` ×1 | `frame_cube_frame.stl` ×1 + `frame_cube_plate_hole14.1.stl` ×6 |
+| Filament / time* | ~12 g / ~1.5 h | ~13 g / ~1.5 h total |
+| Good for | Simplest: one part, nothing to glue | All six switch holes print flat (most accurate); plates swap out |
+
+\*PrusaSlicer generic profile with supports off, which is slow; a modern printer is quicker.
+
+**Frame + plates assembly:** push a switch into each plate on a table, then press each plate into a frame window. The ring on the back of the plate goes inside, and its small crush ribs give a snug press fit.
+If a plate is loose, put a drop of super glue on the ring. If it's too tight, sand the ribs. The frame and every plate print flat with no supports.
+To tune the press fit, print the frame and one plate first.
+
+![frame exploded](images/frame_exploded.png)
+
 ## Is it possible?
 
 Yes. It's a well-known maker project, and plenty of people have printed one (see [Prior art](#prior-art)).
@@ -36,7 +53,9 @@ The only tricky parts are:
 | `stl/switch_fit_test.stl` | Print this first: a plate and an upright wall with 13.9 / 14.0 / 14.1 / 14.2 mm holes |
 | `stl/switch_cube_30mm_hole14.1.stl` | **The cube, default hole size.** Print this one if you skip the fit test. |
 | `stl/switch_cube_30mm_hole13.9.stl` … `hole14.2.stl` | The same cube in the other hole sizes, to match your fit-test result |
+| `stl/frame_cube_frame.stl` + `stl/frame_cube_plate_hole*.stl` | Frame + plates version: 1 frame, 6 plates in the hole size you picked |
 | `cad/switch_cube.scad` | Parametric OpenSCAD source (size, hole, lip, pockets) |
+| `cad/frame_cube.scad` | Parametric source for the frame + plates version (bar size, press-fit gap, crush ribs) |
 | `cad/preview.scad` | Stand-in switches and keycaps, used for the pictures |
 | `tools/check_fit.py` | Collision check: switches vs. the cube and vs. each other, in every rotation |
 | `tools/build.sh` | Rebuilds all STLs and images and runs the check |
