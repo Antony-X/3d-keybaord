@@ -1,13 +1,13 @@
 # Keyboard Switch Fidget Cube
 
 A 30 mm cube with a mechanical keyboard switch and keycap on every face, purely as a fidget toy (no electronics).
-It prints as **one piece, with no supports**. You push six switches in from the outside and press keycaps on.
+The cube body and the keycaps are 3D printed with no supports added. The only parts you buy are the six switches (see [Can the switches be printed too?](#can-the-switches-be-printed-too)).
 
 | Assembled | Exploded | Cut through the middle |
 |---|---|---|
 | ![assembled](images/assembled.png) | ![exploded](images/exploded.png) | ![section](images/section.png) |
 
-## Two versions
+## Two versions of the body
 
 | | One-piece cube | Frame + plates (style of the original) |
 |---|---|---|
@@ -35,14 +35,15 @@ The only tricky parts are:
    That's why some small commercial cubes tell you to cut off pegs and bend pins.
    This design is 30 mm, and a script checks every switch rotation for collisions. Nothing needs trimming (see [Why 30 mm](#why-30-mm)).
 
-## What you need (the parts you don't print)
+## What you need
 
-| Part | Qty | Notes |
-|---|---|---|
-| MX-style mechanical switches | 6 | Any plate-mount MX-compatible switch: Cherry MX, Gateron, Kailh BOX, Outemu, Akko, etc. 3-pin and 5-pin both work as they are. For fidgeting, pick clicky or tactile ones. The switches in your photos (clear housing, light-blue box stem) look like **Kailh BOX Pale Blue**, a clicky switch. Roughly $3–12 per 10. |
-| 1u keycaps with an MX cross stem | 6 | Any profile works (Cherry, OEM, XDA, DSA, SA). Single caps are about $1 each, or buy a cheap blank/colour sampler pack. |
-| Keycap + switch puller | 1 | Optional, about $2–14. Only needed to take it apart again. |
-| Filament | ~12 g | PLA or PETG. |
+| Part | Qty | Print or buy? | Notes |
+|---|---|---|---|
+| Cube body | 1 | **Print** | Either version above |
+| Keycaps | 6 | **Print** (or reuse/buy) | `stl/keycap_dsa_stem*.stl`, see [Keycaps](#keycaps). Any bought 1u MX keycap also fits. |
+| MX-style mechanical switches | 6 | **Buy** (or reuse) | Any plate-mount MX-compatible switch: Cherry MX, Gateron, Kailh BOX, Outemu, Akko, etc. 3-pin and 5-pin both work as they are. The switches in your photos (clear housing, light-blue box stem) look like **Kailh BOX Pale Blue**, a clicky switch. About $3.50 for 10. |
+| Keycap + switch puller | 1 | Buy (optional) | About $2–14. Only needed to take it apart again. |
+| Filament | ~22 g | | PLA or PETG: about 12–13 g for the body, about 1.5 g per keycap |
 
 **Not compatible:** low-profile Kailh Choc and Gateron LP switches and keycaps, Alps/Matias switches, and Topre. They use different holes and stems.
 
@@ -51,12 +52,14 @@ The only tricky parts are:
 | File | What it is |
 |---|---|
 | `stl/switch_fit_test.stl` | Print this first: a plate and an upright wall with 13.9 / 14.0 / 14.1 / 14.2 mm holes |
-| `stl/switch_cube_30mm_hole14.1.stl` | **The cube, default hole size.** Print this one if you skip the fit test. |
+| `stl/switch_cube_30mm_hole14.1.stl` | **The one-piece cube, default hole size.** Print this one if you skip the fit test. |
 | `stl/switch_cube_30mm_hole13.9.stl` … `hole14.2.stl` | The same cube in the other hole sizes, to match your fit-test result |
 | `stl/frame_cube_frame.stl` + `stl/frame_cube_plate_hole*.stl` | Frame + plates version: 1 frame, 6 plates in the hole size you picked |
+| `stl/keycap_dsa_stem0.2.stl` … `stem0.5.stl` | Printable DSA keycaps; the number is the stem clearance in mm |
 | `cad/switch_cube.scad` | Parametric OpenSCAD source (size, hole, lip, pockets) |
 | `cad/frame_cube.scad` | Parametric source for the frame + plates version (bar size, press-fit gap, crush ribs) |
-| `cad/preview.scad` | Stand-in switches and keycaps, used for the pictures |
+| `cad/keycap.scad` | Keycap source: profile, stem clearance, optional legend. Uses KeyV2 from `cad/lib/KeyV2`. |
+| `cad/preview.scad` | Stand-in switches plus the printed keycaps, used for the pictures |
 | `tools/check_fit.py` | Collision check: switches vs. the cube and vs. each other, in every rotation |
 | `tools/build.sh` | Rebuilds all STLs and images and runs the check |
 
@@ -85,6 +88,40 @@ If two sizes feel equally good, take the larger one. Print the cube STL with tha
 
 PrusaSlicer's generic profile with supports off gives about **12 g** and 1.5 h. That profile is slow; a modern printer is quicker.
 
+## Keycaps
+
+The keycaps come from **[KeyV2](https://github.com/rsheldiii/KeyV2)**, a widely used open-source keycap generator (GPL-3.0).
+They're DSA profile: short, and the same on every face.
+
+The stem is the part that has to fit, and it varies by printer. So print the **four test caps first**: `keycap_dsa_stem0.2`, `0.3`, `0.4` and `0.5`.
+Press each onto a switch. Keep the one that goes on firmly and doesn't fall off when you shake it, then print the rest at that size.
+In general, a bigger number means a looser cap.
+
+- **Orientation:** upright, the open side on the bed, exactly as the STL is.
+- **Supports:** don't add any. The thin "tines" under the stem are KeyV2's built-in support. Snap or cut them off after printing.
+- **Layer height:** 0.12–0.16 mm makes a nicer top. **PETG** stems are tougher than PLA.
+- **Elephant's foot:** turn on compensation. KeyV2's author says a squished first layer causes most stems that don't fit.
+- **Size:** about 1.5 g each.
+
+Want letters or symbols? Set `legend_text` in `cad/keycap.scad` to engrave one. You can also pick another profile (`cherry`, `oem`, `sa`, `dcs`, `g20`).
+
+## Can the switches be printed too?
+
+**Not reliably yet**, so this repo doesn't include printed switches. Here is what's out there; the evidence below comes from the projects' own pages and comments, as of October 2026:
+
+| Design | Clicks? | Tested? | Notes |
+|---|---|---|---|
+| [Dummy Keyboard Switch (MX key) – enemyzero](https://makerworld.com/models/1984011) | No, linear or tactile | **Yes**, about 17k prints, 4.5★ | One-piece print, PETG recommended. The author says it's not fully MX-compatible. |
+| [Print-A-Click V2 – Terrentec](https://makerworld.com/models/2983145) | **Yes**, claimed | Barely: 5 ratings | PETG required. It was designed for a 15.6 mm switch pocket; whether it clips into a 14 mm plate is unknown. |
+| [James Stanley's printed switch](https://incoherency.co.uk/blog/stories/3pct-keyboard.html) | No | Yes: 200k+ presses on a test rig | Its plunger isn't an MX cross, so normal keycaps don't fit |
+| [Riskable Void Switch](https://github.com/riskable/void_switch) | No, tactile | Used daily by its author | Needs 3 small magnets per switch; personal-use license |
+| [Mechanical Switch Fidget Click – kriswillcode](https://www.printables.com/model/71100) | **Yes**, loud | 50 makes | A good printed click mechanism, but it's a 32 mm standalone toy (plus a pen spring), far too big for a cube face |
+
+So nobody has a well-tested printed switch that **both clicks and fits a normal 14 mm plate with MX keycaps**.
+Real switches are cheap (about $3.50 for 10) and you already have six, so use those.
+
+If you want to experiment anyway, the MakerWorld designs above are free to download for personal use. They aren't openly licensed, so they can't be copied into this repo.
+
 ## Assembly
 
 1. Check every hole is clean: no strings, no blobs, and no squished first layer on the bottom face (trim it with a knife).
@@ -101,6 +138,7 @@ To remove a keycap without pulling the switch out, use a keycap puller.
 - *Switch won't go in:* use the next larger hole size, or file the hole lightly. Also check for elephant's foot.
 - *Switch wobbles or pops out:* use a smaller hole size. Or the lip printed thin: reprint at 0.15 mm layers.
 - *A switch feels gritty:* it's being squeezed. Use a larger hole size.
+- *Printed keycap won't go on, or cracks:* use a bigger stem number. *Falls off:* use a smaller one.
 
 ## How it works
 
@@ -110,9 +148,8 @@ Each face has:
 - a **15.8 mm pocket** under the lip, so the clips can spring open,
 - a **13 mm pocket** behind that, for the pins, centre post and the optional 5-pin pegs.
 
-The middle is hollow. The pocket ceilings are short bridges and the steps between pockets are 45°, so it prints without supports.
-
-Your cube uses a frame with removable face plates. This design is one piece instead: fewer parts and no glue, and the switches still come out from the outside with a puller.
+In the one-piece cube the middle is hollow. Its pocket ceilings are short bridges and the steps between pockets are 45°, so it prints without supports.
+The frame version builds the same geometry from a skeleton frame plus six flat plates.
 
 ### Why 30 mm
 
@@ -130,10 +167,13 @@ So any MX switch fits in any rotation at 30 mm. Your cube looks a bit smaller th
 
 ## Customising
 
-Open `cad/switch_cube.scad` in [OpenSCAD](https://openscad.org) and use the Customizer panel, or run:
+Open the `.scad` files in [OpenSCAD](https://openscad.org) and use the Customizer panel.
+The keycaps and `tools/build.sh` need a **recent OpenSCAD** (2025 or a nightly build); the older 2021.01 can't run KeyV2.
+First fetch KeyV2 with `git submodule update --init`. Then, for example:
 
 ```sh
 openscad -o my_cube.stl -D 'part="cube"' -D cube_size=30 -D hole_size=14.05 cad/switch_cube.scad
+openscad -o my_cap.stl -D stem_slop=0.35 -D 'legend_text="A"' cad/keycap.scad
 python3 tools/check_fit.py my_cube.stl 30      # needs: pip install trimesh manifold3d
 ```
 
@@ -141,7 +181,7 @@ python3 tools/check_fit.py my_cube.stl 30      # needs: pip install trimesh mani
 
 ## Prior art
 
-Other published versions of this idea, for comparison. None of their files are used here; this model was written from scratch.
+Other published versions of this idea, for comparison. None of their files are used here; the cube was written from scratch.
 
 - [MX Fidget Cube – judy2k](https://www.thingiverse.com/thing:3622010): one piece, printed standing on a corner with a brim
 - [Mechanical Keyboard Switch Fidget Cube – Unboxious](https://www.thingiverse.com/thing:4027401): needs tree supports, and 5-pin pegs cut off
@@ -151,7 +191,8 @@ Other published versions of this idea, for comparison. None of their files are u
 - [Mechanical Switch Fidget Cube – scuzzy19](https://makerworld.com/en/models/422104)
 - Commercial: Thock King Fidget Cube (resin shell); its mini version requires cutting pegs and bending pins
 
+The keycaps are generated with [KeyV2](https://github.com/rsheldiii/KeyV2) by rsheldiii (GPL-3.0).
 Switch dimensions come from the [Cherry MX datasheet](https://cdn.sparkfun.com/datasheets/Components/Switches/MX%20Series.pdf).
 The pocket idea is the usual printed-plate approach, as in [Riskable's MX cutout](https://www.thingiverse.com/thing:4120804).
 
-> Not physically test-printed yet. The geometry is checked in software, and the fit-test piece is there to absorb printer-to-printer differences.
+> Not physically test-printed yet. The geometry is checked in software, and the fit-test pieces (holes and keycap stems) are there to absorb printer-to-printer differences.
