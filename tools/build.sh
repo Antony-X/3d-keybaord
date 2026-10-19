@@ -42,6 +42,15 @@ scad -o "$asm" -D 'part="assembly"' -D "switch_span=$SIZE" cad/frame_cube.scad
 python3 tools/check_fit.py "$asm" "$SIZE" | tail -1
 rm -f "$asm"
 
+# Fully printed click module (experimental), plus the tuning variants.
+echo "-> stl/click_*.stl"
+scad -o stl/click_plate.stl -D 'part="print_plate"' cad/click_module.scad
+scad -o stl/click_plate_soft.stl -D 'part="print_plate"' -D fin_t=0.6 cad/click_module.scad
+scad -o stl/click_plunger.stl -D 'part="print_plunger"' cad/click_module.scad
+scad -o stl/click_spring.stl -D 'part="print_spring"' cad/click_module.scad
+scad -o stl/click_spring_light.stl -D 'part="print_spring"' -D arm_t=2.5 cad/click_module.scad
+OPENSCAD="$OPENSCAD" python3 tools/check_click.py --plot images/click_force.png | tail -1
+
 echo "-> stl/switch_fit_test.stl"
 scad -o stl/switch_fit_test.stl -D 'part="fit_test"' cad/switch_cube.scad
 
@@ -53,4 +62,7 @@ render assembled 0,0,0,62,0,38,170
 render exploded 0,0,0,62,0,38,245
 render frame_assembled 0,0,0,62,0,38,170
 render frame_exploded 0,0,0,62,0,38,330
+render printed_assembled 0,0,0,62,0,38,170
+xvfb-run -a "$OPENSCAD" -q -o images/printed_module.png -D 'view="printed_module"' \
+    --imgsize=1000,800 --camera=10,12,0,50,0,25,135 --colorscheme=Tomorrow --projection=p cad/preview.scad
 python3 tools/render_section.py "stl/switch_cube_${SIZE}mm_hole14.1.stl" images/section.png "$SIZE"

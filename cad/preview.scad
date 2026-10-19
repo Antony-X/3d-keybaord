@@ -1,7 +1,9 @@
 // Preview renders only (not for printing): the cube with stand-in switches and keycaps.
 //   view = "assembled" | "exploded" | "section" | "frame_assembled" | "frame_exploded"
+//          | "printed_assembled" | "printed_module"
 use <switch_cube.scad>
 use <frame_cube.scad>
+use <click_module.scad>
 
 view = "assembled";
 cube_size = 30;
@@ -57,6 +59,19 @@ if (view == "assembled") {
 } else if (view == "frame_exploded") {
     color("#f4f4f2") frame();
     for (i = [0 : 5]) stack(i, 30, 14);
+} else if (view == "printed_assembled") {
+    // Fully printed version: frame + six click modules + printed keycaps.
+    color("#f4f4f2") frame();
+    for (i = [0 : 5]) rotate(face_rotations[i]) translate([0, 0, A]) {
+        module_assembly(0);
+        color(cap_colors[i]) translate([0, 0, 2.6]) import("../stl/keycap_dsa_fit0.2.stl");
+    }
+} else if (view == "printed_module") {
+    // The four printed parts of one face, as they sit on the print bed.
+    color("#f4f4f2") import("../stl/click_plate.stl");
+    color("#3aa0e8") translate([22, 0, 0]) import("../stl/click_plunger.stl");
+    color("#f0b030") translate([0, 26, 0]) import("../stl/click_spring.stl");
+    color(cap_colors[0]) translate([24, 24, 0]) import("../stl/keycap_dsa_fit0.2.stl");
 } else if (view == "section") {
     difference() {
         union() {

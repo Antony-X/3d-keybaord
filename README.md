@@ -1,7 +1,9 @@
 # Keyboard Switch Fidget Cube
 
-A 30 mm cube with a mechanical keyboard switch and keycap on every face, purely as a fidget toy (no electronics).
-The cube body and the keycaps are 3D printed with no supports added. The only parts you buy are the six switches (see [Can the switches be printed too?](#can-the-switches-be-printed-too)).
+A 30 mm cube with a clicky key on every face, purely as a fidget toy (no electronics). There are two ways to build it:
+
+- **With real keyboard switches:** print the body and keycaps, then buy 6 switches (about $3.50 for 10). This is the proven option.
+- **[Fully printed](#fully-printed-version-experimental):** every part comes off the printer, including the clicking mechanism. Nothing is bought and nothing is glued. This version is **experimental**: it's checked in software but hasn't been test-printed yet.
 
 | Assembled | Exploded | Cut through the middle |
 |---|---|---|
@@ -23,6 +25,72 @@ If a plate is loose, put a drop of super glue on the ring. If it's too tight, sa
 To tune the press fit, print the frame and one plate first.
 
 ![frame exploded](images/frame_exploded.png)
+
+## Fully printed version (experimental)
+
+Everything is printed: the frame, plus four parts for each of the six faces. Nothing is bought, glued or made of metal.
+
+| Your cube with printed "switches" | The 4 printed parts for one face (as they sit on the bed) |
+|---|---|
+| ![printed cube](images/printed_assembled.png) | ![printed parts](images/printed_module.png) |
+
+**How it clicks.** Each face plate has two thin flexible fins cut into it.
+The plunger (blue) carries the keycap and has two small teeth that push the fins aside as you press.
+At about 1.5 mm the teeth slip past and the fins snap back: that's the click.
+A flat spiral spring (orange) pushes the key back up, and the keycap landing on the plate is the bottom-out "clack".
+
+**What's checked, and what isn't.** All of these come from `tools/check_click.py`:
+
+- **Clearances:** over the whole press, the plunger only ever touches the fins.
+- **No collisions:** the six modules never hit each other or the frame, in any rotation.
+- **Spring:** a beam model sized it like the printed PETG springs that survived 200k+ presses in James Stanley's switch (peak strain about 2%).
+- **Return:** the force curve below shows the spring always beats the fins on the way back up, even with high friction, so keys shouldn't stick.
+
+The real feel depends on your printer and filament. **Print one face first and test it** before printing all six.
+
+![force curve](images/click_force.png)
+
+Expect it to feel heavier than a keyboard switch: about 190 g at the bottom versus about 60 g for a blue switch.
+The click is plastic snapping, so it's probably quieter than a real blue switch.
+
+### What to print
+
+| Part | Qty | Material | Notes |
+|---|---|---|---|
+| `frame_cube_frame.stl` | 1 | PLA or PETG | Same frame as the frame + plates version |
+| `click_plate.stl` | 6 | **PETG** | Print as is (outer face down), no supports. The fins and spring flex, and PETG survives that far better than PLA. |
+| `click_spring.stl` | 6 | **PETG** | Print flat, as is |
+| `click_plunger.stl` | 6 | PLA or PETG | Print standing up, as is. Use a brim if it falls over. |
+| `keycap_dsa_fit*.stl` | 6 | PLA or PETG | Printed stem into a printed cap: start with `fit0.3` and `fit0.4` |
+
+About 28 g of filament in total.
+Use 0.15 mm layers, because the teeth and fins are small. Use 3 walls and 20–25% infill, and turn on elephant's foot compensation.
+
+### Steps
+
+1. **Print a test set:** 1 plate, 1 plunger, 1 spring, and keycaps `fit0.3` + `fit0.4`.
+   Before assembling, flick each fin with a fingernail. It must wiggle freely. If the first layer fused it, run a knife through the gap.
+2. **Plunger:** from the **back** of the plate, push the plunger in "+" end first until its little ears stop against the guides.
+   It will click past the fins on the way. It only fits one way round; if it jams, turn it 90°.
+3. **Spring:** turn the plate face down. Put the spring on the back, **pin and boss facing the plate**, so the pin goes into the hole in the plunger.
+   Press the spring down between the four posts until it snaps under their hooks.
+4. **Test:** press the "+" stem. It should click at about half travel and spring back.
+   Don't press it all the way without a keycap; the keycap is the stop.
+5. **Tune if needed** (see below), then print the other five sets.
+6. Press each module into a frame window, the same way as the frame + plates version, then push on the keycaps.
+
+### Tuning
+
+| Problem | Fix |
+|---|---|
+| Key stays down, or comes back slowly | Use `click_plate_soft.stl` (thinner fins). Rubbing pencil graphite on the teeth also helps. |
+| Key feels too heavy | Use `click_spring_light.stl`, ideally together with the soft plate |
+| Fins don't move, or the click feels mushy | Fins are fused or too tight: clean the gaps. Check that your elephant's foot isn't filling them. |
+| Keycap loose or too tight on the printed stem | Use another `keycap_dsa_fit*` number |
+
+Every combination of these two plates and two springs passes the return check.
+A stronger fin than the default (0.8 mm) fails it, so the default is the strongest click that still returns reliably.
+To change anything, edit the knobs at the top of `cad/click_module.scad` and re-run `tools/check_click.py`.
 
 ## Is it possible?
 
@@ -56,11 +124,16 @@ The only tricky parts are:
 | `stl/switch_cube_30mm_hole13.9.stl` … `hole14.2.stl` | The same cube in the other hole sizes, to match your fit-test result |
 | `stl/frame_cube_frame.stl` + `stl/frame_cube_plate_hole*.stl` | Frame + plates version: 1 frame, 6 plates in the hole size you picked |
 | `stl/keycap_dsa_fit0.1.stl` … `fit0.4.stl` | Printable DSA keycaps; the number is the extra clearance (mm) in the "+" hole that grips the switch |
+| `stl/click_plate.stl`, `click_plunger.stl`, `click_spring.stl` | Fully printed version: one printed "switch" per face (print 6 of each) |
+| `stl/click_plate_soft.stl`, `click_spring_light.stl` | Tuning variants for the fully printed version |
 | `cad/switch_cube.scad` | Parametric OpenSCAD source (size, hole, lip, pockets) |
 | `cad/frame_cube.scad` | Parametric source for the frame + plates version (bar size, press-fit gap, crush ribs) |
 | `cad/keycap.scad` | Keycap source: profile, "+" hole clearance, optional legend. Uses KeyV2 from `cad/lib/KeyV2`. |
+| `cad/click_module.scad` | Source for the fully printed click module, with the click tuning knobs at the top |
 | `cad/preview.scad` | Stand-in switches plus the printed keycaps, used for the pictures |
 | `tools/check_fit.py` | Collision check: switches vs. the cube and vs. each other, in every rotation |
+| `tools/check_click.py` | Checks for the printed click module: part clearances over the whole press, collisions between faces, and the force curve |
+| `tools/spring_fe.py` | Beam model of the printed spiral spring (stiffness and strain) |
 | `tools/build.sh` | Rebuilds all STLs and images and runs the check |
 
 ## Printing
@@ -118,9 +191,11 @@ Want letters or symbols? Set `legend_text` in `cad/keycap.scad` to engrave one. 
 | [Mechanical Switch Fidget Click – kriswillcode](https://www.printables.com/model/71100) | **Yes**, loud | 50 makes | A good printed click mechanism, but it's a 32 mm standalone toy (plus a pen spring), far too big for a cube face |
 
 So nobody has a well-tested printed switch that **both clicks and fits a normal 14 mm plate with MX keycaps**.
-Real switches are cheap (about $3.50 for 10) and you already have six, so use those.
+That's why this repo has its own design: see [Fully printed version](#fully-printed-version-experimental).
+It borrows the ideas that *are* proven: thick, narrow PETG spiral springs like Stanley's, and a snap-past click like the printed fidget clickers.
+If you want the proven route instead, real switches are cheap (about $3.50 for 10), and you already have six.
 
-If you want to experiment anyway, the MakerWorld designs above are free to download for personal use. They aren't openly licensed, so they can't be copied into this repo.
+The MakerWorld designs above are free to download for personal use. They aren't openly licensed, so they can't be copied into this repo.
 
 ## Assembly
 
