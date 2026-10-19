@@ -1,0 +1,68 @@
+// Preview renders only (not for printing): the cube with stand-in switches and keycaps.
+//   view = "assembled" | "exploded" | "section"
+use <switch_cube.scad>
+
+view = "assembled";
+cube_size = 30;
+A = cube_size / 2;
+$fn = 48;
+
+cap_colors = ["#2f7fc1", "#e8692c", "#7a4bb3", "#7cc85a", "#d63a4a", "#26335c"];
+face_rotations = [[0, 0, 0], [180, 0, 0], [0, 90, 0], [0, -90, 0], [-90, 0, 0], [90, 0, 0]];
+
+module mx_switch() {
+    // top housing (clear)
+    color([0.85, 0.92, 1.0, 0.55])
+        hull() {
+            translate([0, 0, 0.5]) cube([15.6, 15.6, 1], center = true);
+            translate([0, 0, 6.3]) cube([11.5, 11.5, 0.6], center = true);
+        }
+    // stem
+    color("#3aa0e8") translate([0, 0, 6.6]) {
+        translate([0, 0, 1.8]) cube([4.1, 1.2, 3.6], center = true);
+        translate([0, 0, 1.8]) cube([1.2, 4.1, 3.6], center = true);
+    }
+    // bottom housing
+    color("#eeeeee") translate([0, 0, -2.5]) cube([14, 14, 5], center = true);
+    // pins and centre post
+    color("#c9a050") for (p = [[-3.81, 2.54], [2.54, 5.08]])
+        translate([p[0], p[1], -8.3]) cylinder(d = 1.3, h = 3.3);
+    color("#eeeeee") translate([0, 0, -8]) cylinder(d = 4, h = 3);
+}
+
+module keycap(lift = 6.5) {
+    translate([0, 0, lift])
+        difference() {
+            hull() {
+                translate([0, 0, 0.5]) cube([18, 18, 1], center = true);
+                translate([0, 0, 8]) cube([12.5, 13.5, 1], center = true);
+            }
+            // cylindrical dish
+            translate([0, 0, 8.5 + 30]) rotate([90, 0, 0]) cylinder(r = 30, h = 30, center = true, $fn = 120);
+            // stem socket
+            translate([0, 0, -0.1]) cube([16, 16, 3], center = true);
+        }
+}
+
+module stack(i, explode = 0) {
+    rotate(face_rotations[i]) {
+        translate([0, 0, A + explode]) mx_switch();
+        color(cap_colors[i]) translate([0, 0, A + 1.8 * explode]) keycap();
+    }
+}
+
+if (view == "assembled") {
+    color("#f4f4f2") switch_cube();
+    for (i = [0 : 5]) stack(i);
+} else if (view == "exploded") {
+    color("#f4f4f2") switch_cube();
+    for (i = [0 : 5]) stack(i, 14);
+} else if (view == "section") {
+    difference() {
+        union() {
+            color("#f4f4f2") switch_cube();
+            for (i = [0 : 5]) stack(i);
+        }
+        translate([-60, 0, -60]) cube(120);
+    }
+}
